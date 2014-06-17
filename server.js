@@ -91,6 +91,24 @@ http.createServer(function(req, res) {
       }));
     }
   }
+  else if (req.method === 'PUT' && (match = req.url.match(/^\/api\/people\/(\d+)$/))) {
+    var body2 = '';
+    var num = match[1];
+    var editedPerson = people[num];
+    req.on('data', function(data) {
+      body2 += data.toString();
+    });
+    req.on('end', function() {
+      var bodyObject = qs.parse(body2);
+      console.log(people);
+      people[num] = editedPerson;
+      editedPerson.name = bodyObject.name;
+      res.end(JSON.stringify({
+        person: editedPerson,
+        status: 'ok'
+      }));
+    });
+  }
   else {
     if (resolvedPath.indexOf(public) === 0) { sendFile(); }
     else { send404(); }
